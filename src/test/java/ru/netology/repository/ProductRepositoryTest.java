@@ -14,6 +14,7 @@ public class ProductRepositoryTest {
     Product book2 = new Book(21, "Book 2", 300, "Иванов");
     Product smartphone1 = new Smartphone(23, "iPhone 12", 5_000, "Apple");
     Product smartphone2 = new Smartphone(32, "iPhone 11", 10_000, "Apple");
+    Product smartphone3 = new Smartphone(44,"iPhone 10", 9_000, "Apple");
 
     @Test
     public void shouldSaveProduct() {
@@ -53,6 +54,32 @@ public class ProductRepositoryTest {
         repository.save(smartphone2);
 
         Assertions.assertThrows(NotFoundException.class, () -> repository.removeById(11));
+    }
+
+    @Test
+    public void addProductDoesNotExist() {
+        repository.save(book1);
+        repository.save(book2);
+        repository.save(smartphone1);
+        repository.save(smartphone2);
+        repository.save(smartphone3);
+
+        Product[] expected = {book1, book2, smartphone1, smartphone2, smartphone3};
+        Product[] actual = repository.findAll();
+
+        Assertions.assertArrayEquals(expected, actual);
+
+    }
+
+    @Test
+    public void addProductAlreadyExist() {
+        repository.save(book1);
+        repository.save(book2);
+        repository.save(smartphone1);
+        repository.save(smartphone2);
+
+        Assertions.assertThrows(AlreadyExistsException.class, () -> repository.save(smartphone2));
+
     }
 
 }
